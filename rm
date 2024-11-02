@@ -1,0 +1,7 @@
+SQLITE
+La ventaja es que:
+
+No necesitas cambiar la estructura de tu UI
+Formik ya maneja la validación y el estado del formulario
+Solo agregas la capa de persistencia
+Es relativamente sencillo de implementar
