@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Button, StyleSheet } from 'react-native';
+import { StyledContainer, PageTitle } from './Styles';
+import NewsCarousel from './NewsCarousel';
 
 export default function HomeScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>SwimIt Chile</Text>
+    <StyledContainer>
+      <PageTitle>Últimas noticias!</PageTitle>
+      <NewsCarousel />
       <Button
         title="Ver Deportistas"
         onPress={() => navigation.navigate('Athletes')}
@@ -13,21 +16,7 @@ export default function HomeScreen({ navigation }) {
         title="Ver Clubes"
         onPress={() => navigation.navigate('Clubs')}
       />
-    </View>
+    </StyledContainer>
   );
 }
 
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 20,
-    },
-    title: {
-      fontSize: 24,
-      fontWeight: 'bold',
-      marginBottom: 20,
-    },
-  });
-  
