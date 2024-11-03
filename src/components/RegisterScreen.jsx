@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { View, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
+import { View, KeyboardAvoidingView, ScrollView, Platform, Alert } from 'react-native';
 import { Formik } from 'formik';
 import { Octicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { FIREBASE_AUTH, FIREBASE_DB } from '../Config/firebase';
 
 import {
     StyledContainer,
@@ -22,10 +25,58 @@ import {
     InputContainer
 } from './Styles';
 
-const Register = () => {
+const Register = ({ navigation, onRegister }) => {
     const [hidePassword, setHidePassword] = useState(true);
     const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
+    const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
+    const auth = FIREBASE_AUTH;
+
+    const handleRegistration = async (values) => {
+        if (values.password !== values.confirmPassword) {
+            Alert.alert('Error', 'Las contraseñas no coinciden');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            // Crear usuario en Firebase Authentication
+            const response = await createUserWithEmailAndPassword(
+                auth,
+                values.email,
+                values.password
+            );
+
+            // Guardar información adicional del usuario en Firestore
+            await setDoc(doc(FIREBASE_DB, 'users', response.user.uid), {
+                nombre: values.nombre,
+                email: values.email,
+                createdAt: new Date().toISOString()
+            });
+
+            Alert.alert('Éxito', '¡Registro completado con éxito!');
+            onRegister(); // Llamar a la función de registro exitoso
+        } catch (error) {
+            console.error('Error al registrar:', error);
+            let errorMessage = 'Error al crear la cuenta';
+            
+            switch (error.code) {
+                case 'auth/email-already-in-use':
+                    errorMessage = 'Este correo electrónico ya está registrado';
+                    break;
+                case 'auth/invalid-email':
+                    errorMessage = 'Correo electrónico inválido';
+                    break;
+                case 'auth/weak-password':
+                    errorMessage = 'La contraseña debe tener al menos 6 caracteres';
+                    break;
+            }
+            
+            Alert.alert('Error', errorMessage);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <KeyboardAvoidingView 
@@ -47,9 +98,7 @@ const Register = () => {
                                 password: '',
                                 confirmPassword: '' 
                             }}
-                            onSubmit={(values) => {
-                                console.log(values);
-                            }}
+                            onSubmit={handleRegistration}
                         >
                             {({ handleChange, handleBlur, handleSubmit, values }) => (
                                 <StyledFormArea>
@@ -98,9 +147,13 @@ const Register = () => {
                                         setHidePassword={setHideConfirmPassword}
                                     />
 
-                                    <StyledButton onPress={handleSubmit}>
+                                    <StyledButton 
+                                        onPress={handleSubmit}
+                                        disabled={loading}
+                                        style={{ opacity: loading ? 0.7 : 1 }}
+                                    >
                                         <ButtonText>
-                                            {t('register.registerButton')}
+                                            {loading ? 'Registrando...' : t('register.registerButton')}
                                         </ButtonText>
                                     </StyledButton>
                                 </StyledFormArea>
