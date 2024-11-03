@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import { View, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { Formik } from 'formik';
 import { Octicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import {
     StyledContainer,
@@ -24,6 +25,7 @@ import {
 const Register = () => {
     const [hidePassword, setHidePassword] = useState(true);
     const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
+    const { t } = useTranslation();
 
     return (
         <KeyboardAvoidingView 
@@ -35,8 +37,8 @@ const Register = () => {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <InnerContainer>
                         <PageLogo resizeMode="cover" source={require('../../assets/logo.png')} />
-                        <PageTitle>SwimIt</PageTitle>
-                        <Subtittle>Crear Cuenta</Subtittle>
+                        <PageTitle>{t('register.title')}</PageTitle>
+                        <Subtittle>{t('register.subtitle')}</Subtittle>
 
                         <Formik
                             initialValues={{ 
@@ -52,18 +54,18 @@ const Register = () => {
                             {({ handleChange, handleBlur, handleSubmit, values }) => (
                                 <StyledFormArea>
                                     <MyTextInput
-                                        label="Nombre Completo"
+                                        label={t('register.fullName')}
                                         icon="person"
-                                        placeholder="Juan Pérez"
+                                        placeholder={t('register.fullNamePlaceholder')}
                                         onChangeText={handleChange('nombre')}
                                         onBlur={handleBlur('nombre')}     
                                         value={values.nombre}
                                     />
 
                                     <MyTextInput
-                                        label="Correo"
+                                        label={t('register.email')}
                                         icon="mail"
-                                        placeholder="correo@ejemplo.com"
+                                        placeholder={t('register.emailPlaceholder')}
                                         onChangeText={handleChange('email')}
                                         onBlur={handleBlur('email')}     
                                         value={values.email}
@@ -71,9 +73,9 @@ const Register = () => {
                                     />
 
                                     <MyTextInput
-                                        label="Contraseña"
+                                        label={t('register.password')}
                                         icon="lock"
-                                        placeholder="* * * * * * * *"
+                                        placeholder={t('register.passwordPlaceholder')}
                                         onChangeText={handleChange('password')}
                                         onBlur={handleBlur('password')}     
                                         value={values.password}
@@ -84,9 +86,9 @@ const Register = () => {
                                     />
 
                                     <MyTextInput
-                                        label="Confirmar Contraseña"
+                                        label={t('register.confirmPassword')}
                                         icon="lock"
-                                        placeholder="* * * * * * * *"
+                                        placeholder={t('register.confirmPasswordPlaceholder')}
                                         onChangeText={handleChange('confirmPassword')}
                                         onBlur={handleBlur('confirmPassword')}     
                                         value={values.confirmPassword}
@@ -98,7 +100,7 @@ const Register = () => {
 
                                     <StyledButton onPress={handleSubmit}>
                                         <ButtonText>
-                                            Registrarse
+                                            {t('register.registerButton')}
                                         </ButtonText>
                                     </StyledButton>
                                 </StyledFormArea>

@@ -1,17 +1,19 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import es from './ESP';
-import en from './EN';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import en from './Languages/en.js';
+import es from './Languages/es.js';
 
 i18n
   .use(initReactI18next)
   .init({
+    compatibilityJSON: 'v3', // Agregar esta línea
     resources: {
-      es: { translation: ESP },
-      en: { translation: EN }
+      es: { translation: es },
+      en: { translation: en }
     },
-    lng: 'ESP', // idioma por defecto
-    fallbackLng: 'ESP',
+    lng: 'es', // idioma por defecto
+    fallbackLng: 'es',
     interpolation: {
       escapeValue: false
     }

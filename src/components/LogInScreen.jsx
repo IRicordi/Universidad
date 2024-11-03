@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { View } from 'react-native';
-import { Formik } from 'formik';  // Note the capital F
+import { Formik } from 'formik';
 import { Octicons } from '@expo/vector-icons';
 import { KeyboardAvoidingView, ScrollView, Platform, Text } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import {
     StyledContainer,
@@ -18,13 +19,15 @@ import {
     RightIcon,
     MainColors,
     StyledButton,
-    ButtonText
+    ButtonText,
+    InputContainer
 } from './Styles';
 
-const { accionbuttoms } = MainColors;
+const { accionbuttoms, text } = MainColors;
 
 const Login = () => {
     const [hidePassword, setHidePassword] = useState(true);
+    const { t } = useTranslation();
 
     return (
         <KeyboardAvoidingView 
@@ -36,9 +39,7 @@ const Login = () => {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <InnerContainer>
                         <PageLogo resizeMode="cover" source={require('../../assets/logo.png')} />
-                        <PageTitle>Bienvenido!</PageTitle> 
-                        {/* // Aquí puedes cambiar el título principal */}
-                        
+                        <PageTitle>{t('login.welcome')}</PageTitle>
 
                         <Formik
                             initialValues={{ email: '', password: '' }}
@@ -51,19 +52,19 @@ const Login = () => {
                                     <View style={{ marginBottom: 25 }}>
                                         <Text style={{ 
                                             fontSize: 16, 
-                                            color: MainColors.text,
+                                            color: text,
                                             marginBottom: 10,
                                             textAlign: 'center',
                                             fontWeight: 'bold'
                                         }}>
-                                            Ingresa tus datos para continuar
+                                            {t('login.enterData')}
                                         </Text>
                                     </View>
 
                                     <MyTextInput
-                                        label="Correo Electrónico" // Aquí puedes cambiar el label del correo
+                                        label={t('login.email')}
                                         icon="mail"
-                                        placeholder="alemanon@gmail.com"
+                                        placeholder={t('login.emailPlaceholder')}
                                         placeholderTextColor={MainColors.tertiary}
                                         onChangeText={handleChange('email')}
                                         onBlur={handleBlur('email')}     
@@ -72,9 +73,9 @@ const Login = () => {
                                     />
 
                                     <MyTextInput
-                                        label="Contraseña" // Aquí puedes cambiar el label de la contraseña
+                                        label={t('login.password')}
                                         icon="lock"
-                                        placeholder="* * * * * * * *"
+                                        placeholder={t('login.passwordPlaceholder')}
                                         placeholderTextColor={MainColors.tertiary}
                                         onChangeText={handleChange('password')}
                                         onBlur={handleBlur('password')}     
@@ -87,8 +88,7 @@ const Login = () => {
 
                                     <StyledButton onPress={handleSubmit}>
                                         <ButtonText>
-                                            Iniciar Sesión
-                                            {/* // Aquí puedes cambiar el texto del botón */}
+                                            {t('login.loginButton')}
                                         </ButtonText>
                                     </StyledButton>
                                 </StyledFormArea>
@@ -103,22 +103,24 @@ const Login = () => {
 
 const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, ...props }) => {
     return (
-        <View>
-            <LeftIcon>
-                <Octicons name={icon} size={30} color={accionbuttoms} />
-            </LeftIcon>
-            <StyledInputLabel>{label}</StyledInputLabel>
-            <StyledTextInput {...props} />
-            {isPassword && (
-                <RightIcon onPress={() => setHidePassword(!hidePassword)}>
-                    <Octicons 
-                        name={hidePassword ? 'eye-closed' : 'eye'} 
-                        size={30} 
-                        color={MainColors.tertiary}
-                    />
-                </RightIcon>
-            )}
-        </View>
+        <InputContainer>
+            {label && <StyledInputLabel>{label}</StyledInputLabel>}
+            <View style={{ position: 'relative' }}>
+                <LeftIcon>
+                    <Octicons name={icon} size={20} color={accionbuttoms} />
+                </LeftIcon>
+                <StyledTextInput {...props} />
+                {isPassword && (
+                    <RightIcon onPress={() => setHidePassword(!hidePassword)}>
+                        <Octicons 
+                            name={hidePassword ? 'eye-closed' : 'eye'} 
+                            size={20} 
+                            color={MainColors.tertiary}
+                        />
+                    </RightIcon>
+                )}
+            </View>
+        </InputContainer>
     );
 };
 

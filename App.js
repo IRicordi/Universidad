@@ -5,6 +5,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import { I18nextProvider } from 'react-i18next';
+import i18n from './src/Translations/i18n'; 
+import { useTranslation } from 'react-i18next';
 
 import HomeScreen from './src/components/HomeScreen';
 import AthletesScreen from './src/components/AthletesScreen';
