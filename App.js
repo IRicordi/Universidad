@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import HomeScreen from './src/components/HomeScreen';
 import AthletesScreen from './src/components/AthletesScreen';
 import ClubsScreen from './src/components/ClubsScreen';
+import ClubDetailScreen from './src/components/ClubDetailScreen';
 import AuthScreen from './src/components/AuthScreen';
 import ProfileScreen from './src/components/ProfileScreen';
 import CalendarScreen from './src/components/CalendarScreen';
@@ -20,13 +21,10 @@ import DevTools from './src/components/DevTools';
 import LogInScreen from './src/components/LogInScreen';
 import RegisterScreen from './src/components/RegisterScreen';
 
-
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-
-// Aqui esta el codigo de navegacion entre pantallas
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -76,6 +74,54 @@ function TabNavigator() {
   );
 }
 
+const ClubStackNavigator = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={({ navigation, route }) => ({
+        headerLeft: () => {
+          // Si estamos en la pantalla de detalles, mostrar botón de retroceso
+          if (route.name === 'ClubDetail') {
+            return (
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                style={{ marginLeft: 10 }}
+                onPress={() => navigation.goBack()}
+              />
+            );
+          }
+          // En la pantalla principal de clubes, mostrar botón de menú
+          return (
+            <Ionicons
+              name="menu"
+              size={24}
+              style={{ marginLeft: 10 }}
+              onPress={() => navigation.openDrawer()}
+            />
+          );
+        }
+      })}
+    >
+      <Stack.Screen 
+        name="ClubsList" 
+        component={ClubsScreen}
+        options={{
+          title: 'Clubes',
+          headerShown: true
+        }}
+      />
+      <Stack.Screen 
+        name="ClubDetail" 
+        component={ClubDetailScreen}
+        options={{
+          title: 'Detalles del Club',
+          headerShown: true
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
 function DrawerNavigator({ onResetAuth }) {
   return (
     <Drawer.Navigator
@@ -119,9 +165,10 @@ function DrawerNavigator({ onResetAuth }) {
       />
       <Drawer.Screen 
         name="Clubs" 
-        component={ClubsScreen}
+        component={ClubStackNavigator}
         options={{
-          title: 'Clubes'
+          title: 'Clubes',
+          headerShown: false
         }}
       />
       <Drawer.Screen 
@@ -166,7 +213,6 @@ function DrawerNavigator({ onResetAuth }) {
   );
 }
 
-
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -200,6 +246,7 @@ export default function App() {
 
   const handleSkip = async () => {
     await AsyncStorage.setItem('isLoggedIn', 'true');
+    await AsyncStorage.setItem('isGuest', 'true');
     setIsLoggedIn(true);
   };
 
