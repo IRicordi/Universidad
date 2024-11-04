@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import HomeScreen from './src/components/HomeScreen';
 import AthletesScreen from './src/components/AthletesScreen';
+import AthleteDetailScreen from './src/components/AthleteDetailScreen';
 import ClubsScreen from './src/components/ClubsScreen';
 import ClubDetailScreen from './src/components/ClubDetailScreen';
 import AuthScreen from './src/components/AuthScreen';
@@ -26,6 +27,8 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function TabNavigator() {
+  const { t } = useTranslation();
+  
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -50,7 +53,7 @@ function TabNavigator() {
         name="HomeTab" 
         component={HomeScreen} 
         options={{ 
-          title: 'Inicio',
+          title: t('navigation.home'),
           headerShown: false
         }}
       />
@@ -58,7 +61,7 @@ function TabNavigator() {
         name="Calendar" 
         component={CalendarScreen}
         options={{ 
-          title: 'Calendario',
+          title: t('navigation.calendar'),
           headerShown: false
         }}
       />
@@ -66,7 +69,7 @@ function TabNavigator() {
         name="Favorites" 
         component={FavoritesScreen}
         options={{ 
-          title: 'Favoritos',
+          title: t('navigation.favorites'),
           headerShown: false
         }}
       />
@@ -75,11 +78,12 @@ function TabNavigator() {
 }
 
 const ClubStackNavigator = () => {
+  const { t } = useTranslation();
+  
   return (
     <Stack.Navigator
       screenOptions={({ navigation, route }) => ({
         headerLeft: () => {
-          // Si estamos en la pantalla de detalles, mostrar botón de retroceso
           if (route.name === 'ClubDetail') {
             return (
               <Ionicons
@@ -90,7 +94,6 @@ const ClubStackNavigator = () => {
               />
             );
           }
-          // En la pantalla principal de clubes, mostrar botón de menú
           return (
             <Ionicons
               name="menu"
@@ -106,7 +109,7 @@ const ClubStackNavigator = () => {
         name="ClubsList" 
         component={ClubsScreen}
         options={{
-          title: 'Clubes',
+          title: t('screenTitles.clubsList'),
           headerShown: true
         }}
       />
@@ -114,7 +117,7 @@ const ClubStackNavigator = () => {
         name="ClubDetail" 
         component={ClubDetailScreen}
         options={{
-          title: 'Detalles del Club',
+          title: t('screenTitles.clubDetails'),
           headerShown: true
         }}
       />
@@ -122,7 +125,59 @@ const ClubStackNavigator = () => {
   );
 };
 
+const AthleteStack = createNativeStackNavigator();
+
+const AthleteStackNavigator = () => {
+  const { t } = useTranslation();
+  
+  return (
+    <AthleteStack.Navigator
+      screenOptions={({ navigation, route }) => ({
+        headerLeft: () => {
+          if (route.name === 'AthleteDetail') {
+            return (
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                style={{ marginLeft: 10 }}
+                onPress={() => navigation.goBack()}
+              />
+            );
+          }
+          return (
+            <Ionicons
+              name="menu"
+              size={24}
+              style={{ marginLeft: 10 }}
+              onPress={() => navigation.openDrawer()}
+            />
+          );
+        }
+      })}
+    >
+      <AthleteStack.Screen 
+        name="AthletesList" 
+        component={AthletesScreen}
+        options={{
+          title: t('screenTitles.athletesList'),
+          headerShown: true
+        }}
+      />
+      <AthleteStack.Screen 
+        name="AthleteDetail" 
+        component={AthleteDetailScreen}
+        options={{
+          title: t('screenTitles.athleteDetails'),
+          headerShown: true
+        }}
+      />
+    </AthleteStack.Navigator>
+  );
+};
+
 function DrawerNavigator({ onResetAuth }) {
+  const { t } = useTranslation();
+  
   return (
     <Drawer.Navigator
       screenOptions={({ route }) => ({
@@ -152,22 +207,23 @@ function DrawerNavigator({ onResetAuth }) {
         name="MainTabs" 
         component={TabNavigator}
         options={{
-          title: 'Inicio',
+          title: t('navigation.home'),
           headerShown: true
         }}
       />
       <Drawer.Screen 
         name="Athletes" 
-        component={AthletesScreen}
+        component={AthleteStackNavigator}
         options={{
-          title: 'Deportistas'
+          title: t('navigation.athletes'),
+          headerShown: false
         }}
       />
       <Drawer.Screen 
         name="Clubs" 
         component={ClubStackNavigator}
         options={{
-          title: 'Clubes',
+          title: t('navigation.clubs'),
           headerShown: false
         }}
       />
@@ -175,28 +231,28 @@ function DrawerNavigator({ onResetAuth }) {
         name="Calendar" 
         component={CalendarScreen}
         options={{
-          title: 'Calendario'
+          title: t('navigation.calendar')
         }}
       />
       <Drawer.Screen 
         name="Favorites" 
         component={FavoritesScreen}
         options={{
-          title: 'Favoritos'
+          title: t('navigation.favorites')
         }}
       />
       <Drawer.Screen 
         name="Profile" 
         component={ProfileScreen}
         options={{
-          title: 'Perfil'
+          title: t('navigation.profile')
         }}
       />
       {__DEV__ && (
         <Drawer.Screen 
           name="DevTools" 
           options={{ 
-            title: 'Dev Tools',
+            title: t('navigation.devTools'),
             drawerIcon: ({ focused, color, size }) => (
               <Ionicons 
                 name={focused ? 'construct' : 'construct-outline'} 
@@ -216,6 +272,7 @@ function DrawerNavigator({ onResetAuth }) {
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     checkLoginStatus();
@@ -260,49 +317,51 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {!isLoggedIn ? (
-          <>
+    <I18nextProvider i18n={i18n}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {!isLoggedIn ? (
+            <>
+              <Stack.Screen 
+                name="Auth" 
+                options={{ headerShown: false }}
+              >
+                {props => (
+                  <AuthScreen
+                    {...props}
+                    onSkip={handleSkip}
+                  />
+                )}
+              </Stack.Screen>
+              <Stack.Screen 
+                name="LogIn" 
+                options={{ 
+                  headerShown: true,
+                  title: t('navigation.login')
+                }}
+              >
+                {props => <LogInScreen {...props} onLogin={handleLogin} />}
+              </Stack.Screen>
+              <Stack.Screen 
+                name="Register" 
+                options={{ 
+                  headerShown: true,
+                  title: t('navigation.register')
+                }}
+              >
+                {props => <RegisterScreen {...props} onRegister={handleRegister} />}
+              </Stack.Screen>
+            </>
+          ) : (
             <Stack.Screen 
-              name="Auth" 
+              name="Main" 
               options={{ headerShown: false }}
             >
-              {props => (
-                <AuthScreen
-                  {...props}
-                  onSkip={handleSkip}
-                />
-              )}
+              {props => <DrawerNavigator {...props} onResetAuth={handleResetAuth} />}
             </Stack.Screen>
-            <Stack.Screen 
-              name="LogIn" 
-              options={{ 
-                headerShown: true,
-                title: 'Iniciar Sesión'
-              }}
-            >
-              {props => <LogInScreen {...props} onLogin={handleLogin} />}
-            </Stack.Screen>
-            <Stack.Screen 
-              name="Register" 
-              options={{ 
-                headerShown: true,
-                title: 'Crear Cuenta'
-              }}
-            >
-              {props => <RegisterScreen {...props} onRegister={handleRegister} />}
-            </Stack.Screen>
-          </>
-        ) : (
-          <Stack.Screen 
-            name="Main" 
-            options={{ headerShown: false }}
-          >
-            {props => <DrawerNavigator {...props} onResetAuth={handleResetAuth} />}
-          </Stack.Screen>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </I18nextProvider>
   );
 }

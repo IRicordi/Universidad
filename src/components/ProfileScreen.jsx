@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { FIREBASE_AUTH, FIREBASE_DB } from '../Config/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 export default function ProfileScreen() {
   const [userData, setUserData] = useState(null);
@@ -12,6 +13,7 @@ export default function ProfileScreen() {
   const navigation = useNavigation();
   const auth = FIREBASE_AUTH;
   const currentUser = auth.currentUser;
+  const { t } = useTranslation();
 
   useEffect(() => {
     loadUserData();
@@ -36,18 +38,18 @@ export default function ProfileScreen() {
     try {
       await updateDoc(doc(FIREBASE_DB, 'users', currentUser.uid), newData);
       setUserData(prev => ({ ...prev, ...newData }));
-      Alert.alert('Éxito', 'Perfil actualizado correctamente');
+      Alert.alert(t('perfil.exitoTitulo'), t('perfil.exitoMensaje'));
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
-      Alert.alert('Error', 'No se pudo actualizar el perfil');
+      Alert.alert(t('perfil.errorTitulo'), t('perfil.errorMensaje'));
     }
   };
 
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <Text>Cargando...</Text>
+        <Text>{t('perfil.cargando')}</Text>
       </View>
     );
   }
@@ -60,9 +62,9 @@ export default function ProfileScreen() {
           <View style={styles.avatarContainer}>
             <Ionicons name="person-circle-outline" size={100} color="#2196F3" />
           </View>
-          <Text style={styles.guestTitle}>Invitado</Text>
+          <Text style={styles.guestTitle}>{t('perfil.invitado')}</Text>
           <Text style={styles.guestText}>
-            Inicia sesión o regístrate para acceder a todas las funciones
+            {t('perfil.mensajeInvitado')}
           </Text>
           
           <View style={styles.authButtonsContainer}>
@@ -70,14 +72,14 @@ export default function ProfileScreen() {
               style={[styles.authButton, { backgroundColor: '#2196F3' }]}
               onPress={() => navigation.navigate('LogIn')}
             >
-              <Text style={styles.authButtonText}>Iniciar Sesión</Text>
+              <Text style={styles.authButtonText}>{t('navigation.login')}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
               style={[styles.authButton, { backgroundColor: '#4CAF50' }]}
               onPress={() => navigation.navigate('Register')}
             >
-              <Text style={styles.authButtonText}>Registrarse</Text>
+              <Text style={styles.authButtonText}>{t('navigation.register')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -93,7 +95,7 @@ export default function ProfileScreen() {
           <Ionicons name="person-circle" size={100} color="#2196F3" />
         </View>
         
-        <Text style={styles.title}>Perfil</Text>
+        <Text style={styles.title}>{t('perfil.titulo')}</Text>
         
         {isEditing ? (
           <EditProfileForm 
@@ -103,17 +105,17 @@ export default function ProfileScreen() {
           />
         ) : (
           <View style={styles.infoContainer}>
-            <InfoRow label="Nombre" value={userData?.nombre || 'No especificado'} />
-            <InfoRow label="Email" value={userData?.email || 'No especificado'} />
-            <InfoRow label="Teléfono" value={userData?.telefono || 'No especificado'} />
-            <InfoRow label="Dirección" value={userData?.direccion || 'No especificado'} />
-            <InfoRow label="Fecha de nacimiento" value={userData?.fechaNacimiento || 'No especificado'} />
+            <InfoRow label={t('perfil.nombre')} value={userData?.nombre || t('perfil.noEspecificado')} />
+            <InfoRow label={t('perfil.email')} value={userData?.email || t('perfil.noEspecificado')} />
+            <InfoRow label={t('perfil.telefono')} value={userData?.telefono || t('perfil.noEspecificado')} />
+            <InfoRow label={t('perfil.direccion')} value={userData?.direccion || t('perfil.noEspecificado')} />
+            <InfoRow label={t('perfil.fechaNacimiento')} value={userData?.fechaNacimiento || t('perfil.noEspecificado')} />
             
             <TouchableOpacity 
               style={styles.editButton}
               onPress={() => setIsEditing(true)}
             >
-              <Text style={styles.editButtonText}>Editar Perfil</Text>
+              <Text style={styles.editButtonText}>{t('perfil.editarPerfil')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -130,6 +132,7 @@ const InfoRow = ({ label, value }) => (
 );
 
 const EditProfileForm = ({ userData, onSave, onCancel }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
       telefono: userData?.telefono || '',
       direccion: userData?.direccion || '',
@@ -137,16 +140,14 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
   });
 
   const handleSave = () => {
-      // Validación básica
       if (!formData.telefono.trim()) {
-          Alert.alert('Error', 'Por favor ingresa un número de teléfono');
+          Alert.alert(t('perfil.errorTitulo'), t('perfil.errorTelefono'));
           return;
       }
 
-      // Validación simple de formato de fecha (puedes mejorarla según tus necesidades)
       const fechaRegex = /^\d{2}\/\d{2}\/\d{4}$/;
       if (formData.fechaNacimiento && !fechaRegex.test(formData.fechaNacimiento)) {
-          Alert.alert('Error', 'Por favor ingresa la fecha en formato DD/MM/AAAA');
+          Alert.alert(t('perfil.errorTitulo'), t('perfil.errorFecha'));
           return;
       }
 
@@ -157,7 +158,7 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
       <View style={styles.formContainer}>
           <TextInput
               style={styles.input}
-              placeholder="Teléfono"
+              placeholder={t('perfil.telefonoPlaceholder')}
               value={formData.telefono}
               onChangeText={(text) => setFormData(prev => ({ ...prev, telefono: text }))}
               placeholderTextColor="#666"
@@ -166,7 +167,7 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
           />
           <TextInput
               style={styles.input}
-              placeholder="Dirección"
+              placeholder={t('perfil.direccionPlaceholder')}
               value={formData.direccion}
               onChangeText={(text) => setFormData(prev => ({ ...prev, direccion: text }))}
               placeholderTextColor="#666"
@@ -174,7 +175,7 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
           />
           <TextInput
               style={styles.input}
-              placeholder="Fecha de nacimiento (DD/MM/AAAA)"
+              placeholder={t('perfil.fechaNacimientoPlaceholder')}
               value={formData.fechaNacimiento}
               onChangeText={(text) => setFormData(prev => ({ ...prev, fechaNacimiento: text }))}
               placeholderTextColor="#666"
@@ -186,14 +187,14 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
                   style={[styles.button, { backgroundColor: '#4CAF50' }]}
                   onPress={handleSave}
               >
-                  <Text style={styles.buttonText}>Guardar</Text>
+                  <Text style={styles.buttonText}>{t('perfil.guardar')}</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
                   style={[styles.button, { backgroundColor: '#f44336' }]}
                   onPress={onCancel}
               >
-                  <Text style={styles.buttonText}>Cancelar</Text>
+                  <Text style={styles.buttonText}>{t('perfil.cancelar')}</Text>
               </TouchableOpacity>
           </View>
       </View>

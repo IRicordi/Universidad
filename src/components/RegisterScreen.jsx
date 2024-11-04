@@ -69,7 +69,7 @@ const Register = ({ navigation, onRegister }) => {
             Alert.alert('Éxito', '¡Registro completado con éxito!');
             onRegister();
         } catch (error) {
-            // ... resto del código de manejo de errores igual
+            
         }
     };
 

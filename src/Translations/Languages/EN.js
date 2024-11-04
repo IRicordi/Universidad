@@ -49,6 +49,33 @@ export default {
         titulo: "Profile",
         edad: "Age",
         nivel: "Level",
-        mejorTiempo: "Best Time"
+        mejorTiempo: "Best Time",
+        nombre: "Name",
+        email: "Email",
+        telefono: "Phone",
+        direccion: "Address",
+        fechaNacimiento: "Birth Date",
+        noEspecificado: "Not specified",
+        editarPerfil: "Edit Profile",
+        guardar: "Save",
+        cancelar: "Cancel",
+        invitado: "Guest",
+        mensajeInvitado: "Log in or sign up to access all features",
+        cargando: "Loading...",
+        exitoTitulo: "Success",
+        exitoMensaje: "Profile updated successfully",
+        errorTitulo: "Error",
+        errorMensaje: "Could not update profile",
+        errorTelefono: "Please enter a phone number",
+        errorFecha: "Please enter the date in DD/MM/YYYY format",
+        telefonoPlaceholder: "Phone number",
+        direccionPlaceholder: "Address",
+        fechaNacimientoPlaceholder: "Birth date (DD/MM/YYYY)"
+    },
+    screenTitles: {
+        athleteDetails: "Athlete Details",
+        clubDetails: "Club Details",
+        athletesList: "Athletes",
+        clubsList: "Clubs"
     }
 };

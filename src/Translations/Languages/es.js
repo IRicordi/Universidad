@@ -48,6 +48,33 @@ export default {
         titulo: "Perfil",
         edad: "Edad",
         nivel: "Nivel",
-        mejorTiempo: "Mejor Tiempo"
+        mejorTiempo: "Mejor Tiempo",
+        nombre: "Nombre",
+        email: "Correo electrónico",
+        telefono: "Teléfono",
+        direccion: "Dirección",
+        fechaNacimiento: "Fecha de nacimiento",
+        noEspecificado: "No especificado",
+        editarPerfil: "Editar Perfil",
+        guardar: "Guardar",
+        cancelar: "Cancelar",
+        invitado: "Invitado",
+        mensajeInvitado: "Inicia sesión o regístrate para acceder a todas las funciones",
+        cargando: "Cargando...",
+        exitoTitulo: "Éxito",
+        exitoMensaje: "Perfil actualizado correctamente",
+        errorTitulo: "Error",
+        errorMensaje: "No se pudo actualizar el perfil",
+        errorTelefono: "Por favor ingresa un número de teléfono",
+        errorFecha: "Por favor ingresa la fecha en formato DD/MM/AAAA",
+        telefonoPlaceholder: "Número de teléfono",
+        direccionPlaceholder: "Dirección",
+        fechaNacimientoPlaceholder: "Fecha de nacimiento (DD/MM/AAAA)"
+    },
+    screenTitles: {
+        athleteDetails: "Detalles del Deportista",
+        clubDetails: "Detalles del Club",
+        athletesList: "Deportistas",
+        clubsList: "Clubes"
     }
 };
