@@ -134,70 +134,107 @@ const InfoRow = ({ label, value }) => (
 const EditProfileForm = ({ userData, onSave, onCancel }) => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState({
-      telefono: userData?.telefono || '',
-      direccion: userData?.direccion || '',
-      fechaNacimiento: userData?.fechaNacimiento || '',
+    telefono: userData?.telefono || '',
+    direccion: userData?.direccion || '',
+    fechaNacimiento: userData?.fechaNacimiento || '',
   });
 
+  const formatDate = (text) => {
+    // Remove any non-digit characters
+    const cleanText = text.replace(/\D/g, '');
+    
+    // Add slashes automatically
+    let formatted = '';
+    for (let i = 0; i < cleanText.length && i < 8; i++) {
+      if (i === 2 || i === 4) {
+        formatted += '/';
+      }
+      formatted += cleanText[i];
+    }
+    return formatted;
+  };
+
+  const handleDateChange = (text) => {
+    const formatted = formatDate(text);
+    setFormData(prev => ({ ...prev, fechaNacimiento: formatted }));
+  };
+
   const handleSave = () => {
-      if (!formData.telefono.trim()) {
-          Alert.alert(t('perfil.errorTitulo'), t('perfil.errorTelefono'));
-          return;
-      }
+    if (!formData.telefono.trim()) {
+      Alert.alert(t('perfil.errorTitulo'), t('perfil.errorTelefono'));
+      return;
+    }
 
-      const fechaRegex = /^\d{2}\/\d{2}\/\d{4}$/;
-      if (formData.fechaNacimiento && !fechaRegex.test(formData.fechaNacimiento)) {
-          Alert.alert(t('perfil.errorTitulo'), t('perfil.errorFecha'));
-          return;
-      }
+    const fechaRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+    if (formData.fechaNacimiento && !fechaRegex.test(formData.fechaNacimiento)) {
+      Alert.alert(t('perfil.errorTitulo'), t('perfil.errorFecha'));
+      return;
+    }
 
-      onSave(formData);
+    // Validar que la fecha sea válida
+    if (formData.fechaNacimiento) {
+      const [dia, mes, año] = formData.fechaNacimiento.split('/').map(Number);
+      const fecha = new Date(año, mes - 1, dia);
+      if (
+        fecha.getDate() !== dia ||
+        fecha.getMonth() !== mes - 1 ||
+        fecha.getFullYear() !== año ||
+        año < 1900 ||
+        año > new Date().getFullYear()
+      ) {
+        Alert.alert(t('perfil.errorTitulo'), t('perfil.fechaInvalida'));
+        return;
+      }
+    }
+
+    onSave(formData);
   };
 
   return (
-      <View style={styles.formContainer}>
-          <TextInput
-              style={styles.input}
-              placeholder={t('perfil.telefonoPlaceholder')}
-              value={formData.telefono}
-              onChangeText={(text) => setFormData(prev => ({ ...prev, telefono: text }))}
-              placeholderTextColor="#666"
-              keyboardType="phone-pad"
-              autoCapitalize="none"
-          />
-          <TextInput
-              style={styles.input}
-              placeholder={t('perfil.direccionPlaceholder')}
-              value={formData.direccion}
-              onChangeText={(text) => setFormData(prev => ({ ...prev, direccion: text }))}
-              placeholderTextColor="#666"
-              autoCapitalize="sentences"
-          />
-          <TextInput
-              style={styles.input}
-              placeholder={t('perfil.fechaNacimientoPlaceholder')}
-              value={formData.fechaNacimiento}
-              onChangeText={(text) => setFormData(prev => ({ ...prev, fechaNacimiento: text }))}
-              placeholderTextColor="#666"
-              keyboardType="numeric"
-          />
-          
-          <View style={styles.buttonContainer}>
-              <TouchableOpacity 
-                  style={[styles.button, { backgroundColor: '#4CAF50' }]}
-                  onPress={handleSave}
-              >
-                  <Text style={styles.buttonText}>{t('perfil.guardar')}</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity 
-                  style={[styles.button, { backgroundColor: '#f44336' }]}
-                  onPress={onCancel}
-              >
-                  <Text style={styles.buttonText}>{t('perfil.cancelar')}</Text>
-              </TouchableOpacity>
-          </View>
+    <View style={styles.formContainer}>
+      <TextInput
+        style={styles.input}
+        placeholder={t('perfil.telefonoPlaceholder')}
+        value={formData.telefono}
+        onChangeText={(text) => setFormData(prev => ({ ...prev, telefono: text }))}
+        placeholderTextColor="#666"
+        keyboardType="phone-pad"
+        autoCapitalize="none"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t('perfil.direccionPlaceholder')}
+        value={formData.direccion}
+        onChangeText={(text) => setFormData(prev => ({ ...prev, direccion: text }))}
+        placeholderTextColor="#666"
+        autoCapitalize="sentences"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="DD/MM/AAAA"
+        value={formData.fechaNacimiento}
+        onChangeText={handleDateChange}
+        placeholderTextColor="#666"
+        keyboardType="numeric"
+        maxLength={10}
+      />
+      
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity 
+          style={[styles.button, { backgroundColor: '#4CAF50' }]}
+          onPress={handleSave}
+        >
+          <Text style={styles.buttonText}>{t('perfil.guardar')}</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={[styles.button, { backgroundColor: '#f44336' }]}
+          onPress={onCancel}
+        >
+          <Text style={styles.buttonText}>{t('perfil.cancelar')}</Text>
+        </TouchableOpacity>
       </View>
+    </View>
   );
 };
 
