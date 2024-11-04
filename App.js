@@ -8,6 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './src/Translations/i18n'; 
 import { useTranslation } from 'react-i18next';
+import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { View } from 'react-native';
 
 import HomeScreen from './src/components/HomeScreen';
 import AthletesScreen from './src/components/AthletesScreen';
@@ -21,6 +23,7 @@ import FavoritesScreen from './src/components/FavoritesScreen';
 import DevTools from './src/components/DevTools';
 import LogInScreen from './src/components/LogInScreen';
 import RegisterScreen from './src/components/RegisterScreen';
+import LanguageSelector from './src/components/LanguageSelector';
 
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -202,6 +205,14 @@ function DrawerNavigator({ onResetAuth }) {
         },
         drawerActiveTintColor: '#2196F3',
       })}
+      drawerContent={props => (
+        <View style={{ flex: 1 }}>
+          <DrawerContentScrollView {...props}>
+            <DrawerItemList {...props} />
+          </DrawerContentScrollView>
+          <LanguageSelector />
+        </View>
+      )}
     >
       <Drawer.Screen 
         name="MainTabs" 

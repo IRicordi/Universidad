@@ -21,6 +21,7 @@
     "@react-navigation/native-stack": "^6.11.0",
     "dotenv": "^16.4.5",
     "expo": "~51.0.38",
+    "expo-linear-gradient": "^13.0.2",
     "expo-sqlite": "^14.0.6",
     "expo-status-bar": "~1.12.1",
     "firebase": "^11.0.1",

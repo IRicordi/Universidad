@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Constants from 'expo-constants';
+import { TouchableOpacity, Text } from 'react-native';
 
 const StatusBarHeight = Constants.statusBarHeight;
 
@@ -95,15 +96,20 @@ export const RightIcon = styled.TouchableOpacity`
     z-index: 1;
 `;
 
-export const StyledButton = styled.TouchableOpacity`
-    padding: 15px;
-    background-color: ${primary};
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
-    margin-vertical: 5px;
-    height: 60px;
-`;
+export const StyledButton = ({ children, style, ...props }) => (
+    <TouchableOpacity
+        style={[{
+            width: '100%',
+            padding: 15,
+            borderRadius: 5,
+            backgroundColor: '#2B87D1',
+            marginVertical: 5,
+        }, style]}
+        {...props}
+    >
+        {children}
+    </TouchableOpacity>
+);
 
 export const ButtonText = styled.Text`
     color: ${purewhite};
