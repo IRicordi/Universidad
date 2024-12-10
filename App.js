@@ -24,6 +24,7 @@ import DevTools from './src/components/DevTools';
 import LogInScreen from './src/components/LogInScreen';
 import RegisterScreen from './src/components/RegisterScreen';
 import LanguageSelector from './src/components/LanguageSelector';
+import UsersDetailScreen from './src/components/UsersDetailScreen';
 
 const Drawer = createDrawerNavigator();
 const Tab = createBottomTabNavigator();
@@ -79,6 +80,46 @@ function TabNavigator() {
     </Tab.Navigator>
   );
 }
+
+const UserStackNavigator = () => {
+  const { t } = useTranslation();
+  
+  return (
+    <UserStack.Navigator
+      screenOptions={({ navigation, route }) => ({
+        headerLeft: () => {
+          if (route.name === 'UsersDetail') {
+            return (
+              <Ionicons
+                name="arrow-back"
+                size={24}
+                style={{ marginLeft: 10 }}
+                onPress={() => navigation.goBack()}
+              />
+            );
+          }
+          return (
+            <Ionicons
+              name="menu"
+              size={24}
+              style={{ marginLeft: 10 }}
+              onPress={() => navigation.openDrawer()}
+            />
+          );
+        }
+      })}
+    >
+      <UserStack.Screen 
+        name="UsersDetailScreen" 
+        component={UsersDetailScreen}
+        options={{
+          title: t('screenTitles.userDetails'),
+          headerShown: true
+        }}
+      />
+    </UserStack.Navigator>
+  );
+};
 
 const ClubStackNavigator = () => {
   const { t } = useTranslation();
@@ -333,46 +374,38 @@ export default function App() {
         <Stack.Navigator>
           {!isLoggedIn ? (
             <>
-              <Stack.Screen 
-                name="Auth" 
-                options={{ headerShown: false }}
-              >
-                {props => (
-                  <AuthScreen
-                    {...props}
-                    onSkip={handleSkip}
-                  />
-                )}
+              <Stack.Screen name="Auth" options={{ headerShown: false }}>
+                {props => <AuthScreen {...props} onSkip={handleSkip} />}
               </Stack.Screen>
-              <Stack.Screen 
-                name="LogIn" 
-                options={{ 
-                  headerShown: true,
-                  title: t('navigation.login')
-                }}
-              >
+              <Stack.Screen name="LogIn" options={{ headerShown: true, title: t('navigation.login') }}>
                 {props => <LogInScreen {...props} onLogin={handleLogin} />}
               </Stack.Screen>
-              <Stack.Screen 
-                name="Register" 
-                options={{ 
-                  headerShown: true,
-                  title: t('navigation.register')
-                }}
-              >
+              <Stack.Screen name="Register" options={{ headerShown: true, title: t('navigation.register') }}>
                 {props => <RegisterScreen {...props} onRegister={handleRegister} />}
               </Stack.Screen>
             </>
           ) : (
-            <Stack.Screen 
-              name="Main" 
-              options={{ headerShown: false }}
-            >
-              {props => <DrawerNavigator {...props} onResetAuth={handleResetAuth} />}
-            </Stack.Screen>
+            <>
+              <Stack.Screen name="Main" options={{ headerShown: false }}>
+                {props => <DrawerNavigator {...props} onResetAuth={handleResetAuth} />}
+              </Stack.Screen>
+              <Stack.Screen
+                name="ProfileDetails"
+                component={UsersDetailScreen}
+                options={({ navigation }) => ({
+                  headerLeft: () => (
+                    <Ionicons name="arrow-back" size={24} style={{ marginLeft: 10 }}
+                      onPress={() => navigation.goBack()}
+                    />
+                  ),
+                  headerTitle: "Perfil",
+                  headerShown: true
+                })}
+              />
+            </>
           )}
         </Stack.Navigator>
       </NavigationContainer>
     </I18nextProvider>
-  );
+   );
 }

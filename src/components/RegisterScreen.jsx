@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { View, KeyboardAvoidingView, ScrollView, Platform, Alert } from 'react-native';
+import { View, KeyboardAvoidingView, ScrollView, Platform, Alert, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Formik } from 'formik';
 import { Octicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -29,10 +29,16 @@ const Register = ({ navigation, onRegister }) => {
     const [hidePassword, setHidePassword] = useState(true);
     const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [selectedRole, setSelectedRole] = useState(null);
     const { t } = useTranslation();
     const auth = FIREBASE_AUTH;
 
     const handleRegistration = async (values) => {
+        if (!selectedRole) {
+            Alert.alert('Error', 'Por favor selecciona un rol');
+            return;
+        }
+
         if (values.password !== values.confirmPassword) {
             Alert.alert('Error', 'Las contraseñas no coinciden');
             return;
@@ -46,30 +52,31 @@ const Register = ({ navigation, onRegister }) => {
                 values.password
             );
     
-            // Guardar información expandida del usuario en Firestore
             await setDoc(doc(FIREBASE_DB, 'users', response.user.uid), {
                 nombre: values.nombre,
                 email: values.email,
+                rol: selectedRole,
                 createdAt: new Date().toISOString(),
-                // Campos adicionales inicializados
                 telefono: '',
                 direccion: '',
                 fechaNacimiento: '',
-                fotoPerfil: '', // URL para la foto de perfil
+                fotoPerfil: '',
                 updatedAt: new Date().toISOString(),
                 configuracion: {
                     notificaciones: true,
                     privacidad: 'public',
                     tema: 'light'
                 },
-                rol: 'usuario',
-                isComplete: false // Para saber si completó su perfil
+                isComplete: false
             });
     
             Alert.alert('Éxito', '¡Registro completado con éxito!');
             onRegister();
         } catch (error) {
-            
+            console.error('Error en el registro:', error);
+            Alert.alert('Error', 'Hubo un error en el registro. Por favor, intenta de nuevo.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -116,6 +123,57 @@ const Register = ({ navigation, onRegister }) => {
                                         keyboardType="email-address"
                                     />
 
+                                    {/* Botones de Rol */}
+                                    <View style={styles.roleContainer}>
+                                        <Text style={styles.roleLabel}>Selecciona tu rol:</Text>
+                                        <View style={styles.buttonContainer}>
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.roleButton,
+                                                    selectedRole === 'nadador' && styles.selectedButton
+                                                ]}
+                                                onPress={() => setSelectedRole('nadador')}
+                                            >
+                                                <Text style={[
+                                                    styles.roleButtonText,
+                                                    selectedRole === 'nadador' && styles.selectedButtonText
+                                                ]}>
+                                                    Nadador
+                                                </Text>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.roleButton,
+                                                    selectedRole === 'entrenador' && styles.selectedButton
+                                                ]}
+                                                onPress={() => setSelectedRole('entrenador')}
+                                            >
+                                                <Text style={[
+                                                    styles.roleButtonText,
+                                                    selectedRole === 'entrenador' && styles.selectedButtonText
+                                                ]}>
+                                                    Entrenador
+                                                </Text>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.roleButton,
+                                                    selectedRole === 'marca' && styles.selectedButton
+                                                ]}
+                                                onPress={() => setSelectedRole('marca')}
+                                            >
+                                                <Text style={[
+                                                    styles.roleButtonText,
+                                                    selectedRole === 'marca' && styles.selectedButtonText
+                                                ]}>
+                                                    Marca
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+
                                     <MyTextInput
                                         label={t('register.password')}
                                         icon="lock"
@@ -160,6 +218,45 @@ const Register = ({ navigation, onRegister }) => {
         </KeyboardAvoidingView>
     );
 };
+
+const styles = StyleSheet.create({
+    roleContainer: {
+        marginVertical: 15,
+        width: '100%',
+    },
+    roleLabel: {
+        fontSize: 16,
+        marginBottom: 10,
+        color: MainColors.primary,
+        fontWeight: 'bold',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    roleButton: {
+        flex: 1,
+        backgroundColor: 'white',
+        padding: 10,
+        borderRadius: 5,
+        marginHorizontal: 5,
+        borderWidth: 1,
+        borderColor: MainColors.accionbuttoms,
+        alignItems: 'center',
+    },
+    selectedButton: {
+        backgroundColor: MainColors.accionbuttoms,
+    },
+    roleButtonText: {
+        color: MainColors.accionbuttoms,
+        fontSize: 13,
+        fontWeight: '500',
+    },
+    selectedButtonText: {
+        color: 'white',
+    },
+});
 
 const MyTextInput = ({ label, icon, isPassword, hidePassword, setHidePassword, ...props }) => {
     return (

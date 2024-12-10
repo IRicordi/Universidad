@@ -41,7 +41,8 @@ export default {
     home: {
         latestNews: "¡Últimas noticias!",
         viewAthletes: "Ver Deportistas",
-        viewClubs: "Ver Clubes"
+        viewClubs: "Ver Clubes",
+        featuredProfiles: "Perfiles destacados"
     },
     
     perfil: {
