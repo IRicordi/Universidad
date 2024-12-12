@@ -35,7 +35,7 @@ const Login = ({ navigation, onLogin }) => {
 
     const handleLogin = async (values) => {
         if (values.email === '' || values.password === '') {
-            Alert.alert('Error', 'Por favor completa todos los campos');
+            Alert.alert(t('login.errorTitle'), t('login.emptyFields'));
             return;
         }
 
@@ -48,31 +48,33 @@ const Login = ({ navigation, onLogin }) => {
             );
 
             console.log('Usuario logueado:', response.user.email);
-            Alert.alert('Éxito', '¡Inicio de sesión exitoso!');
-            onLogin(); // Navegar a la pantalla principal
+            Alert.alert(t('login.successTitle'), t('login.successMessage'));
+            onLogin();
         } catch (error) {
             console.error('Error al iniciar sesión:', error);
-            let errorMessage = 'Error al iniciar sesión';
+            let errorMessage;
             
             switch (error.code) {
                 case 'auth/invalid-email':
-                    errorMessage = 'Correo electrónico inválido';
+                    errorMessage = t('login.errors.invalidEmail');
                     break;
                 case 'auth/user-not-found':
-                    errorMessage = 'No existe una cuenta con este correo';
+                    errorMessage = t('login.errors.userNotFound');
                     break;
                 case 'auth/wrong-password':
-                    errorMessage = 'Contraseña incorrecta';
+                    errorMessage = t('login.errors.wrongPassword');
                     break;
                 case 'auth/too-many-requests':
-                    errorMessage = 'Demasiados intentos fallidos. Intenta más tarde';
+                    errorMessage = t('login.errors.tooManyRequests');
                     break;
                 case 'auth/network-request-failed':
-                    errorMessage = 'Error de conexión. Verifica tu internet';
+                    errorMessage = t('login.errors.networkError');
                     break;
+                default:
+                    errorMessage = t('login.errors.default');
             }
             
-            Alert.alert('Error', errorMessage);
+            Alert.alert(t('login.errorTitle'), errorMessage);
         } finally {
             setLoading(false);
         }
@@ -141,7 +143,7 @@ const Login = ({ navigation, onLogin }) => {
                                         style={{ opacity: loading ? 0.7 : 1 }}
                                     >
                                         <ButtonText>
-                                            {loading ? 'Iniciando sesión...' : t('login.loginButton')}
+                                            {loading ? t('login.loading') : t('login.loginButton')}
                                         </ButtonText>
                                     </StyledButton>
                                 </StyledFormArea>

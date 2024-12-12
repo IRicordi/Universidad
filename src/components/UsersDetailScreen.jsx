@@ -3,10 +3,19 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { doc, getDoc } from 'firebase/firestore';
 import { FIREBASE_DB } from '../Config/firebase';
+import { useTranslation } from 'react-i18next';
 
 const UsersDetailScreen = ({ route }) => {
   const [profile, setProfile] = useState(null);
   const { id } = route.params;
+  const { t } = useTranslation();
+
+  const roleMapping = {
+    'entrenador': 'coach',
+    'nadador': 'swimmer',
+    'marca': 'brand'
+  };
+
 
   useEffect(() => {
     loadProfile();
@@ -37,25 +46,39 @@ const UsersDetailScreen = ({ route }) => {
           <Ionicons name="person-circle" size={120} color="#2196F3" />
         </View>
         <Text style={styles.name}>{profile.nombre}</Text>
-        <Text style={styles.role}>{profile.rol}</Text>
+        <Text style={styles.role}>
+          {t(`userDetails.role.${roleMapping[profile.rol]}`)}
+        </Text>
       </View>
 
       <View style={styles.card}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Información de Contacto</Text>
-          <InfoRow icon="call" label="Teléfono" value={profile.telefono} />
-          <InfoRow icon="mail" label="Email" value={profile.email} />
-          <InfoRow icon="location" label="Dirección" value={profile.direccion} />
+          <Text style={styles.sectionTitle}>{t('userDetails.contactInfo')}</Text>
+          <InfoRow 
+            icon="call" 
+            label={t('userDetails.phone')} 
+            value={profile.telefono} 
+          />
+          <InfoRow 
+            icon="mail" 
+            label={t('userDetails.email')} 
+            value={profile.email} 
+          />
+          <InfoRow 
+            icon="location" 
+            label={t('userDetails.address')} 
+            value={profile.direccion} 
+          />
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Acerca de</Text>
+          <Text style={styles.sectionTitle}>{t('userDetails.about')}</Text>
           <Text style={styles.description}>{profile.descripcion}</Text>
         </View>
 
         {profile.logros && profile.logros.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Logros</Text>
+            <Text style={styles.sectionTitle}>{t('userDetails.achievements')}</Text>
             {profile.logros.map((logro, index) => (
               <View key={logro.id} style={styles.achievementItem}>
                 <Ionicons name="trophy" size={20} color="#FFD700" />
@@ -67,7 +90,9 @@ const UsersDetailScreen = ({ route }) => {
 
         <TouchableOpacity style={styles.contactButton}>
           <Ionicons name="mail" size={20} color="white" />
-          <Text style={styles.contactButtonText}>Contactar</Text>
+          <Text style={styles.contactButtonText}>
+            {t('userDetails.contact')}
+          </Text>
         </TouchableOpacity>
       </View>
     </ScrollView>

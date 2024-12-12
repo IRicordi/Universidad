@@ -24,7 +24,20 @@ export default {
         emailPlaceholder: "alemanon@example.com",
         password: "Password",
         passwordPlaceholder: "* * * * * * * *",
-        loginButton: "Log In"
+        loginButton: "Log In",
+        loading: "Signing in...",
+        errorTitle: "Error",
+        successTitle: "Success",
+        successMessage: "Successfully signed in!",
+        emptyFields: "Please fill in all fields",
+        errors: {
+            invalidEmail: "Invalid email address",
+            userNotFound: "No account exists with this email",
+            wrongPassword: "Incorrect password",
+            tooManyRequests: "Too many failed attempts. Please try again later",
+            networkError: "Connection error. Check your internet connection",
+            default: "Login error. Please try again"
+        }
     },
     register: {
         title: "SwimIt",
@@ -37,7 +50,26 @@ export default {
         passwordPlaceholder: "* * * * * * * *",
         confirmPassword: "Confirm Password",
         confirmPasswordPlaceholder: "* * * * * * * *",
-        registerButton: "Sign Up"
+        registerButton: "Sign Up",
+        role: "Select your role",
+        roleRequired: "Please select a role",
+        roles: {
+            swimmer: "Swimmer",
+            coach: "Coach",
+            brand: "Brand"
+        },
+
+        errorTitle: "Error",
+        successTitle: "Success",
+        successMessage: "Registration completed successfully!",
+        passwordMismatch: "Passwords do not match",
+        errors: {
+            emailInUse: "This email is already registered",
+            invalidEmail: "Please enter a valid email address",
+            operationNotAllowed: "Operation not allowed",
+            weakPassword: "Password should be at least 6 characters long",
+            default: "Registration error. Please try again."
+        }
     },
     home: {
         latestNews: "Latest news!",
@@ -46,37 +78,83 @@ export default {
         featuredProfiles: "Featured profiles"
     },
     
-    perfil: {
-        titulo: "Profile",
-        edad: "Age",
-        nivel: "Level",
-        mejorTiempo: "Best Time",
-        nombre: "Name",
+    profile: {
+        title: "My Profile",
+        age: "Age",
+        level: "Level",
+        bestTime: "Best Time",
+        name: "Name",
         email: "Email",
-        telefono: "Phone",
-        direccion: "Address",
-        fechaNacimiento: "Birth Date",
-        noEspecificado: "Not specified",
-        editarPerfil: "Edit Profile",
-        guardar: "Save",
-        cancelar: "Cancel",
-        invitado: "Guest",
-        mensajeInvitado: "Log in or sign up to access all features",
-        cargando: "Loading...",
-        exitoTitulo: "Success",
-        exitoMensaje: "Profile updated successfully",
-        errorTitulo: "Error",
-        errorMensaje: "Could not update profile",
-        errorTelefono: "Please enter a phone number",
-        errorFecha: "Please enter the date in DD/MM/YYYY format",
-        telefonoPlaceholder: "Phone number",
-        direccionPlaceholder: "Address",
-        fechaNacimientoPlaceholder: "Birth date (DD/MM/YYYY)"
+        phone: "Phone",
+        address: "Address",
+        birthDate: "Birth Date",
+        notSpecified: "Not specified",
+        editProfile: "Edit Profile",
+        save: "Save",
+        cancel: "Cancel",
+        guest: "Guest",
+        guestMessage: "Log in or sign up to access your profile",
+        loading: "Loading...",
+        successTitle: "Success",
+        successMessage: "Profile updated successfully",
+        errorTitle: "Error",
+        errorMessage: "Could not update profile",
+        phoneError: "Phone is required",
+        dateError: "Invalid date format",
+        phonePlaceholder: "Phone number",
+        addressPlaceholder: "Address",
+        birthDatePlaceholder: "Birth date (DD/MM/YYYY)",
+        description: "Personal description (100 words max)",
+        achievements: "Swimming Achievements",
+        addAchievement: "Add new achievement",
+        noAchievements: "No achievements registered",
+        changeAvatar: "Change avatar",
+        deleteAchievement: "Delete achievement",
+        editAchievement: "Edit achievement",
+        achievementError: "Achievement cannot be empty",
+        descriptionError: "Description cannot exceed 100 words",
+        dateFormatError: "Please enter the date in DD/MM/YYYY format",
+        invalidDate: "Invalid date",
+        description: "Description",
+        logros: "achievements"
     },
+
     screenTitles: {
         athleteDetails: "Athlete Details",
         clubDetails: "Club Details",
         athletesList: "Athletes",
         clubsList: "Clubs"
+    },
+    profileCapsules: {
+        swimming: "Swimming",
+        achievements: "Achievements",
+        viewProfile: "View Profile"
+    },
+    profileCompletion: {
+        title: "Complete Your Profile!",
+        message: "To make your profile visible to the community, you need to complete all your information.",
+        completeButton: "Complete Profile",
+        laterButton: "Later",
+        requirements: {
+            name: "Name",
+            phone: "Phone",
+            address: "Address",
+            birthDate: "Birth Date",
+            description: "Description"
+        }
+    },
+    userDetails: {
+        contactInfo: "Contact Information",
+        about: "About",
+        achievements: "Achievements",
+        contact: "Contact",
+        phone: "Phone",
+        email: "Email",
+        address: "Address",
+        role: {
+            swimmer: "Swimmer",
+            coach: "Coach",
+            brand: "Brand"
+        }
     }
 };

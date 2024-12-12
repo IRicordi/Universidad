@@ -9,33 +9,38 @@ const isProfileComplete = (userData) => {
   const requiredFields = ['nombre', 'telefono', 'direccion', 'fechaNacimiento', 'descripcion'];
   return requiredFields.every(field => userData[field] && userData[field].trim() !== '');
 };
+import { useTranslation } from 'react-i18next';
 
-const ProfileCapsule = ({ profile, onPress }) => (
-  <TouchableOpacity 
-    style={styles.capsule}
-    onPress={onPress}
-  >
-    <View style={styles.imageContainer}>
-      <Image
-        source={getAvatarById(profile.avatarId || '1')}
-        style={styles.profileImage}
-      />
-      <View style={styles.sportBadge}>
-        <Text style={styles.sportText}>Natación</Text>
+const ProfileCapsule = ({ profile, onPress }) => {
+  const { t } = useTranslation();
+  
+  return (
+    <TouchableOpacity 
+      style={styles.capsule}
+      onPress={onPress}
+    >
+      <View style={styles.imageContainer}>
+        <Image
+          source={getAvatarById(profile.avatarId || '1')}
+          style={styles.profileImage}
+        />
+        <View style={styles.sportBadge}>
+          <Text style={styles.sportText}>{t('profileCapsules.swimming')}</Text>
+        </View>
       </View>
-    </View>
-    
-    <Text style={styles.name}>{profile.nombre}</Text>
-    <Text style={styles.role}>{profile.rol}</Text>
-    
-    <View style={styles.statsContainer}>
-      <View style={styles.statItem}>
-        <Ionicons name="trophy-outline" size={16} color="#666" />
-        <Text style={styles.statText}>{profile.logros?.length || 0}</Text>
+      
+      <Text style={styles.name}>{profile.nombre}</Text>
+      <Text style={styles.role}>{profile.rol}</Text>
+      
+      <View style={styles.statsContainer}>
+        <View style={styles.statItem}>
+          <Ionicons name="trophy-outline" size={16} color="#666" />
+          <Text style={styles.statText}>{profile.logros?.length || 0}</Text>
+        </View>
       </View>
-    </View>
-  </TouchableOpacity>
-);
+    </TouchableOpacity>
+  );
+};
 
 const ProfileCapsules = ({ navigation }) => {
   const [profiles, setProfiles] = useState([]);

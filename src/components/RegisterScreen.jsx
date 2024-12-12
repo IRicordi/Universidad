@@ -34,49 +34,86 @@ const Register = ({ navigation, onRegister }) => {
     const auth = FIREBASE_AUTH;
 
     const handleRegistration = async (values) => {
+        const { t } = useTranslation();
+      
+        // Validación de rol
         if (!selectedRole) {
-            Alert.alert('Error', 'Por favor selecciona un rol');
-            return;
+          Alert.alert(
+            t('register.errorTitle'),
+            t('register.roleRequired')
+          );
+          return;
         }
-
+      
+        // Validación de contraseñas
         if (values.password !== values.confirmPassword) {
-            Alert.alert('Error', 'Las contraseñas no coinciden');
-            return;
+          Alert.alert(
+            t('register.errorTitle'),
+            t('register.passwordMismatch') 
+          );
+          return;
         }
-    
+      
         setLoading(true);
         try {
-            const response = await createUserWithEmailAndPassword(
-                auth,
-                values.email,
-                values.password
-            );
-    
-            await setDoc(doc(FIREBASE_DB, 'users', response.user.uid), {
-                nombre: values.nombre,
-                email: values.email,
-                rol: selectedRole,
-                createdAt: new Date().toISOString(),
-                telefono: '',
-                direccion: '',
-                fechaNacimiento: '',
-                fotoPerfil: '',
-                updatedAt: new Date().toISOString(),
-                configuracion: {
-                    notificaciones: true,
-                    privacidad: 'public',
-                    tema: 'light'
-                },
-                isComplete: false
-            });
-    
-            Alert.alert('Éxito', '¡Registro completado con éxito!');
-            onRegister();
+          const response = await createUserWithEmailAndPassword(
+            auth,
+            values.email,
+            values.password
+          );
+      
+          // Crear documento del usuario
+          await setDoc(doc(FIREBASE_DB, 'users', response.user.uid), {
+            nombre: values.nombre,
+            email: values.email,
+            rol: selectedRole,
+            createdAt: new Date().toISOString(),
+            telefono: '',
+            direccion: '',
+            fechaNacimiento: '',
+            fotoPerfil: '',
+            updatedAt: new Date().toISOString(),
+            configuracion: {
+              notificaciones: true,
+              privacidad: 'public',
+              tema: 'light'
+            },
+            isComplete: false
+          });
+      
+          Alert.alert(
+            t('register.successTitle'), 
+            t('register.successMessage') 
+          );
+          onRegister();
         } catch (error) {
-            console.error('Error en el registro:', error);
-            Alert.alert('Error', 'Hubo un error en el registro. Por favor, intenta de nuevo.');
+          console.error('Error en el registro:', error);
+          
+          // Manejo de errores específicos de Firebase
+          let errorMessage;
+          switch (error.code) {
+            case 'auth/email-already-in-use':
+              errorMessage = t('register.errors.emailInUse');
+              break;
+            case 'auth/invalid-email':
+              errorMessage = t('register.errors.invalidEmail');
+              break;
+            case 'auth/operation-not-allowed':
+              errorMessage = t('register.errors.operationNotAllowed');
+              break;
+            case 'auth/weak-password':
+              errorMessage = t('register.errors.weakPassword');
+              break;
+            default:
+              errorMessage = t('register.errors.default');
+          }
+      
+          Alert.alert(
+            t('register.errorTitle'),
+            errorMessage
+          );
         } finally {
-            setLoading(false);
+          setLoading(false);
         }
     };
 
@@ -125,7 +162,7 @@ const Register = ({ navigation, onRegister }) => {
 
                                     {/* Botones de Rol */}
                                     <View style={styles.roleContainer}>
-                                        <Text style={styles.roleLabel}>Selecciona tu rol:</Text>
+                                        <Text style={styles.roleLabel}>{t('register.role')}</Text>
                                         <View style={styles.buttonContainer}>
                                             <TouchableOpacity
                                                 style={[
@@ -138,7 +175,7 @@ const Register = ({ navigation, onRegister }) => {
                                                     styles.roleButtonText,
                                                     selectedRole === 'nadador' && styles.selectedButtonText
                                                 ]}>
-                                                    Nadador
+                                                    {t('register.roles.swimmer')}
                                                 </Text>
                                             </TouchableOpacity>
 
@@ -153,7 +190,7 @@ const Register = ({ navigation, onRegister }) => {
                                                     styles.roleButtonText,
                                                     selectedRole === 'entrenador' && styles.selectedButtonText
                                                 ]}>
-                                                    Entrenador
+                                                    {t('register.roles.coach')}
                                                 </Text>
                                             </TouchableOpacity>
 
@@ -168,7 +205,7 @@ const Register = ({ navigation, onRegister }) => {
                                                     styles.roleButtonText,
                                                     selectedRole === 'marca' && styles.selectedButtonText
                                                 ]}>
-                                                    Marca
+                                                    {t('register.roles.brand')}
                                                 </Text>
                                             </TouchableOpacity>
                                         </View>

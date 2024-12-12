@@ -5,34 +5,14 @@ import { doc, getDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
+import { useTranslation } from 'react-i18next';
+
 const ProfileAlert = () => {
   const [showModal, setShowModal] = useState(false);
   const navigation = useNavigation();
   const auth = FIREBASE_AUTH;
+  const { t } = useTranslation();
 
-  useEffect(() => {
-    checkProfileCompletion();
-  }, []);
-
-  const checkProfileCompletion = async () => {
-    try {
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        const userDoc = await getDoc(doc(FIREBASE_DB, 'users', currentUser.uid));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          const isComplete = ['nombre', 'telefono', 'direccion', 'fechaNacimiento', 'descripcion']
-            .every(field => userData[field] && userData[field].trim() !== '');
-          
-          if (!isComplete) {
-            setShowModal(true);
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error checking profile:', error);
-    }
-  };
 
   return (
     <Modal
@@ -46,9 +26,9 @@ const ProfileAlert = () => {
             <Ionicons name="person-circle" size={60} color="#2196F3" />
           </View>
           
-          <Text style={styles.title}>¡Completa tu Perfil!</Text>
+          <Text style={styles.title}>{t('profileCompletion.title')}</Text>
           <Text style={styles.message}>
-            Para que tu perfil sea visible en la comunidad, necesitas completar toda tu información.
+            {t('profileCompletion.message')}
           </Text>
 
           <View style={styles.buttonContainer}>
@@ -59,14 +39,18 @@ const ProfileAlert = () => {
                 navigation.navigate('Profile');
               }}
             >
-              <Text style={styles.buttonText}>Completar Perfil</Text>
+              <Text style={styles.buttonText}>
+                {t('profileCompletion.completeButton')}
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.button, styles.laterButton]}
               onPress={() => setShowModal(false)}
             >
-              <Text style={[styles.buttonText, styles.laterButtonText]}>Más Tarde</Text>
+              <Text style={[styles.buttonText, styles.laterButtonText]}>
+                {t('profileCompletion.laterButton')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

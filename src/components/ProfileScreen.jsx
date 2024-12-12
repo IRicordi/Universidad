@@ -39,14 +39,22 @@ export default function ProfileScreen() {
   };
 
   const handleUpdateProfile = async (newData) => {
+    const { t } = useTranslation(); 
+    
     try {
       await updateDoc(doc(FIREBASE_DB, 'users', currentUser.uid), newData);
       setUserData(prev => ({ ...prev, ...newData }));
-      Alert.alert('Éxito', '¡Perfil actualizado correctamente!');
+      Alert.alert(
+        t('profile.successTitle'),     // 'Éxito'
+        t('profile.successMessage')    // '¡Perfil actualizado correctamente!'
+      );
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
-      Alert.alert('Error', 'No se pudo actualizar el perfil');
+      Alert.alert(
+        t('profile.errorTitle'),       // 'Error'
+        t('profile.errorMessage')      // 'No se pudo actualizar el perfil'
+      );
     }
   };
 
@@ -67,7 +75,7 @@ export default function ProfileScreen() {
           </View>
           <Text style={styles.guestTitle}>Invitado</Text>
           <Text style={styles.guestText}>
-            Inicia sesión o regístrate para acceder a tu perfil
+          t('profile.guestMessage')
           </Text>
           
           <View style={styles.authButtonsContainer}>
@@ -97,7 +105,7 @@ export default function ProfileScreen() {
           <Ionicons name="person-circle" size={100} color="#2196F3" />
         </View>
         
-        <Text style={styles.title}>Mi Perfil</Text>
+        <Text style={styles.title}>{t('profile.title')}</Text>
         
         {isEditing ? (
           <EditProfileForm 
@@ -107,12 +115,12 @@ export default function ProfileScreen() {
           />
         ) : (
           <View style={styles.infoContainer}>
-            <InfoRow label="Nombre" value={userData?.nombre || 'No especificado'} />
+            <InfoRow label={t('profile.name')} value={userData?.nombre || 'No especificado'} />
             <InfoRow label="Email" value={userData?.email || 'No especificado'} />
-            <InfoRow label="Teléfono" value={userData?.telefono || 'No especificado'} />
-            <InfoRow label="Dirección" value={userData?.direccion || 'No especificado'} />
-            <InfoRow label="Fecha de Nacimiento" value={userData?.fechaNacimiento || 'No especificado'} />
-            <InfoRow label="Descripción" value={userData?.descripcion || 'No especificado'} />
+            <InfoRow label={t('profile.phone')} value={userData?.telefono || 'No especificado'} />
+            <InfoRow label={t('profile.address')} value={userData?.direccion || 'No especificado'} />
+            <InfoRow label={t('profile.birthDate')} value={userData?.fechaNacimiento || 'No especificado'} />
+            <InfoRow label={t('profile.description')} value={userData?.descripcion || 'No especificado'} />
             <InfoRow 
               label="Logros" 
               value={userData?.logros || []} 
@@ -123,7 +131,7 @@ export default function ProfileScreen() {
               style={styles.editButton}
               onPress={() => setIsEditing(true)}
             >
-              <Text style={styles.editButtonText}>Editar Perfil</Text>
+              <Text style={styles.editButtonText}>{t('profile.editProfile')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -144,7 +152,7 @@ const InfoRow = ({ label, value, isLogros }) => {
             </Text>
           ))}
           {value.length === 0 && (
-            <Text style={styles.value}>No hay logros registrados</Text>
+            <Text style={styles.value}>{t('profile.noAchievements')}</Text>
           )}
         </View>
       </View>
@@ -160,6 +168,7 @@ const InfoRow = ({ label, value, isLogros }) => {
 };
 
 const EditProfileForm = ({ userData, onSave, onCancel }) => {
+  const { t } = useTranslation();
   const [showAvatarSelector, setShowAvatarSelector] = useState(false);
   const [formData, setFormData] = useState({
     avatarId: userData?.avatarId || '1',
@@ -215,22 +224,33 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
   };
 
   const handleSave = () => {
+    const { t } = useTranslation();
+  
     if (!formData.telefono.trim()) {
-      Alert.alert('Error', 'El teléfono es obligatorio');
+      Alert.alert(
+        t('profile.errorTitle'),
+        t('profile.phoneError')  // "El teléfono es obligatorio"
+      );
       return;
     }
-
+  
     if (formData.descripcion.split(' ').length > 100) {
-      Alert.alert('Error', 'La descripción no puede tener más de 100 palabras');
+      Alert.alert(
+        t('profile.errorTitle'),
+        t('profile.descriptionError')  // "La descripción no puede tener más de 100 palabras"
+      );
       return;
     }
-
+  
     const fechaRegex = /^\d{2}\/\d{2}\/\d{4}$/;
     if (formData.fechaNacimiento && !fechaRegex.test(formData.fechaNacimiento)) {
-      Alert.alert('Error', 'Formato de fecha inválido');
+      Alert.alert(
+        t('profile.errorTitle'),
+        t('profile.dateFormatError')  // "Por favor ingresa la fecha en formato DD/MM/AAAA"
+      );
       return;
     }
-
+  
     if (formData.fechaNacimiento) {
       const [dia, mes, año] = formData.fechaNacimiento.split('/').map(Number);
       const fecha = new Date(año, mes - 1, dia);
@@ -241,11 +261,14 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
         año < 1900 ||
         año > new Date().getFullYear()
       ) {
-        Alert.alert('Error', 'Fecha inválida');
+        Alert.alert(
+          t('profile.errorTitle'),
+          t('profile.invalidDate')  // "Fecha inválida"
+        );
         return;
       }
     }
-
+  
     onSave(formData);
   };
 
@@ -259,7 +282,7 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
           source={getAvatarById(formData.avatarId)}
           style={styles.avatarImage}
         />
-        <Text style={styles.changeAvatarText}>Cambiar avatar</Text>
+        <Text style={styles.changeAvatarText}>{t('profile.changeAvatar')}</Text>
       </TouchableOpacity>
 
       <AvatarSelector
@@ -271,7 +294,7 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
       
       <TextInput
         style={styles.input}
-        placeholder="Teléfono"
+        placeholder={t('profile.phonePlaceholder')}
         value={formData.telefono}
         onChangeText={(text) => setFormData(prev => ({ ...prev, telefono: text }))}
         placeholderTextColor="#666"
@@ -280,7 +303,7 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
       
       <TextInput
         style={styles.input}
-        placeholder="Dirección"
+        placeholder={t('profile.addressPlaceholder')}
         value={formData.direccion}
         onChangeText={(text) => setFormData(prev => ({ ...prev, direccion: text }))}
         placeholderTextColor="#666"
@@ -298,7 +321,7 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
 
       <TextInput
         style={[styles.input, styles.descripcionInput]}
-        placeholder="Descripción personal (máximo 100 palabras)"
+        placeholder={t('profile.description')}
         value={formData.descripcion}
         onChangeText={(text) => setFormData(prev => ({ ...prev, descripcion: text }))}
         placeholderTextColor="#666"
@@ -307,12 +330,12 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
       />
 
       <View style={styles.logrosContainer}>
-        <Text style={styles.logrosTitle}>Logros en Natación</Text>
+        <Text style={styles.logrosTitle}>{t('profile.achievements')}</Text>
         
         <View style={styles.addLogroContainer}>
           <TextInput
             style={styles.logroInput}
-            placeholder="Añade un nuevo logro"
+            placeholder={t('profile.addAchievement')}
             value={nuevoLogro}
             onChangeText={setNuevoLogro}
             placeholderTextColor="#666"
@@ -347,14 +370,14 @@ const EditProfileForm = ({ userData, onSave, onCancel }) => {
           style={[styles.button, { backgroundColor: '#4CAF50' }]}
           onPress={handleSave}
         >
-          <Text style={styles.buttonText}>Guardar</Text>
+          <Text style={styles.buttonText}>{t('profile.save')}</Text>
         </TouchableOpacity>
         
         <TouchableOpacity 
           style={[styles.button, { backgroundColor: '#f44336' }]}
           onPress={onCancel}
         >
-          <Text style={styles.buttonText}>Cancelar</Text>
+          <Text style={styles.buttonText}>{t('profile.cancel')}</Text>
         </TouchableOpacity>
       </View>
     </View>
