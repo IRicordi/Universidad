@@ -116,7 +116,8 @@ export default {
         descriptionError: "La descripción no puede tener más de 100 palabras",
         dateFormatError: "Por favor ingresa la fecha en formato DD/MM/AAAA",
         invalidDate: "Fecha inválida",
-        logros: "Logros"
+        logros: "Logros", 
+        guestMessage: "Inicia sesión o regístrate para acceder a tu perfil",
     },
 
     screenTitles: {

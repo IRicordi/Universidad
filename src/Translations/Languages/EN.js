@@ -116,7 +116,8 @@ export default {
         dateFormatError: "Please enter the date in DD/MM/YYYY format",
         invalidDate: "Invalid date",
         description: "Description",
-        logros: "achievements"
+        logros: "achievements",
+        guestMessage: "Log in or sign up to access your profile",
     },
 
     screenTitles: {
